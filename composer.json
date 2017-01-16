@@ -1,0 +1,28 @@
+{
+  "name": "buuum/imagediff",
+  "type": "library",
+  "description": "A simple image difference with php",
+  "homepage": "https://github.com/buuum/imagediff",
+  "keywords": [
+    "image difference",
+    "image diff"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alfons Martinez",
+      "email": "alfonsmartinezparra@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Buuum\\": "src/imagediff"
+    }
+  },
+  "require": {
+    "php": ">=5.5.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  }
+}
