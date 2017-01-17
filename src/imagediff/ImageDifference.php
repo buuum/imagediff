@@ -257,9 +257,6 @@ class ImageDifference
         } elseif ($this->array_map[$x][$y - 1] == 1 && $this->is_perimeter($x, $y - 1)) {
             $this->mark_check($x, $y - 1);
             $this->find_area($x, $y - 1);
-        } elseif ($this->array_map[$x - 1][$y - 1] == 1 && $this->is_perimeter($x - 1, $y - 1)) {
-            $this->mark_check($x - 1, $y - 1);
-            $this->find_area($x - 1, $y - 1);
         } elseif ($this->array_map[$x - 1][$y] == 1 && $this->is_perimeter($x - 1, $y)) {
             $this->mark_check($x - 1, $y);
             $this->find_area($x - 1, $y);
