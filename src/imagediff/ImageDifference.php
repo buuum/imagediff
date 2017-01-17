@@ -36,6 +36,11 @@ class ImageDifference
     private $count = 2;
 
     /**
+     * @var int
+     */
+    private $back = 0;
+
+    /**
      * ImageDifference constructor.
      * @param $image1
      * @param $image2
@@ -49,7 +54,15 @@ class ImageDifference
     }
 
     /**
-     * @throws Exception
+     * @param $value
+     */
+    public function setPixelRation($value)
+    {
+        $this->pixel_ration = $value;
+    }
+
+    /**
+     * @throws \Exception
      */
     public function compare()
     {
@@ -58,7 +71,7 @@ class ImageDifference
         $sy1 = imagesy($this->image1);
 
         if ($sx1 !== imagesx($this->image2) || $sy1 !== imagesy($this->image2)) {
-            throw new Exception("The images are not even the same size");
+            throw new \Exception("The images are not even the same size");
         }
 
         $block_check_size_rows = round($sx1 / $this->pixel_ration);
@@ -191,6 +204,7 @@ class ImageDifference
      */
     protected function mark_check($x, $y)
     {
+        $this->back = 0;
         $this->coordinates[$this->count][] = [
             ($y * $this->pixel_ration) + $this->pixel_ration,
             ($x * $this->pixel_ration) + $this->pixel_ration
@@ -229,23 +243,47 @@ class ImageDifference
         } elseif ($this->array_map[$x + 1][$y] == 1 && $this->is_perimeter($x + 1, $y)) {
             $this->mark_check($x + 1, $y);
             $this->find_area($x + 1, $y);
+        } elseif ($this->array_map[$x + 1][$y + 1] == 1 && $this->is_perimeter($x + 1, $y + 1)) {
+            $this->mark_check($x + 1, $y + 1);
+            $this->find_area($x + 1, $y + 1);
         } elseif ($this->array_map[$x][$y - 1] == 1 && $this->is_perimeter($x, $y - 1)) {
             $this->mark_check($x, $y - 1);
             $this->find_area($x, $y - 1);
+        } elseif ($this->array_map[$x - 1][$y - 1] == 1 && $this->is_perimeter($x - 1, $y - 1)) {
+            $this->mark_check($x - 1, $y - 1);
+            $this->find_area($x - 1, $y - 1);
         } elseif ($this->array_map[$x - 1][$y] == 1 && $this->is_perimeter($x - 1, $y)) {
             $this->mark_check($x - 1, $y);
             $this->find_area($x - 1, $y);
+        } elseif ($this->array_map[$x - 1][$y - 1] == 1 && $this->is_perimeter($x - 1, $y - 1)) {
+            $this->mark_check($x - 1, $y - 1);
+            $this->find_area($x - 1, $y - 1);
+        } else {
+            $initial = $this->coordinates[$this->count][0];
+
+            $last = $this->coordinates[$this->count][count($this->coordinates[$this->count]) - (1 + $this->back)];
+            $this->back++;
+
+            $last_x = ($last[0] - $this->pixel_ration) / $this->pixel_ration;
+            $last_y = ($last[1] - $this->pixel_ration) / $this->pixel_ration;
+
+            if (($last[0] == $initial[0] || $last[0] == $initial[0] + $this->pixel_ration || $last[0] == $initial[0] - $this->pixel_ration) && ($last[1] == $initial[1] || $last[1] == $initial[1] + $this->pixel_ration || $last[1] == $initial[1] - $this->pixel_ration)) {
+                $this->mark_check($last_y, $last_x);
+            } else {
+                $this->find_area($last_y, $last_x);
+            }
         }
-
-
     }
 
     /**
      * @param $x
      * @param $y
      */
-    protected function find_block($x, $y)
-    {
+    protected
+    function find_block(
+        $x,
+        $y
+    ) {
         for ($i = $x - 1; $i <= $x + 1; $i++) {
             for ($z = $y - 1; $z <= $y + 1; $z++) {
                 if ($this->array_map[$i][$z] == 1) {
@@ -261,8 +299,11 @@ class ImageDifference
      * @param $y_start
      * @return bool
      */
-    protected function check_differences($x_start, $y_start)
-    {
+    protected
+    function check_differences(
+        $x_start,
+        $y_start
+    ) {
         $total_x = ($this->block_check_size_w * $x_start) + $this->block_check_size_w;
         $total_y = ($this->block_check_size_h * $y_start) + $this->block_check_size_h;
 
