@@ -62,6 +62,14 @@ class ImageDifference
     }
 
     /**
+     * @return int
+     */
+    public function getPixelRation()
+    {
+        return $this->pixel_ration;
+    }
+
+    /**
      * @throws \Exception
      */
     public function compare()
@@ -279,11 +287,8 @@ class ImageDifference
      * @param $x
      * @param $y
      */
-    protected
-    function find_block(
-        $x,
-        $y
-    ) {
+    protected function find_block($x, $y)
+    {
         for ($i = $x - 1; $i <= $x + 1; $i++) {
             for ($z = $y - 1; $z <= $y + 1; $z++) {
                 if ($this->array_map[$i][$z] == 1) {
@@ -299,11 +304,8 @@ class ImageDifference
      * @param $y_start
      * @return bool
      */
-    protected
-    function check_differences(
-        $x_start,
-        $y_start
-    ) {
+    protected function check_differences($x_start, $y_start)
+    {
         $total_x = ($this->block_check_size_w * $x_start) + $this->block_check_size_w;
         $total_y = ($this->block_check_size_h * $y_start) + $this->block_check_size_h;
 
