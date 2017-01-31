@@ -229,7 +229,7 @@ class ImageDifference
     {
         for ($i = $x - 1; $i <= $x + 1; $i++) {
             for ($z = $y - 1; $z <= $y + 1; $z++) {
-                if ($this->array_map[$i][$z] == 0) {
+                if (!isset($this->array_map[$i][$z]) || $this->array_map[$i][$z] == 0) {
                     return true;
                 }
             }
@@ -241,26 +241,36 @@ class ImageDifference
     /**
      * @param $x
      * @param $y
+     * @return bool
+     */
+    protected function checkPoint($x, $y)
+    {
+        return isset($this->array_map[$x][$y]) && $this->array_map[$x][$y] == 1 && $this->is_perimeter($x, $y);
+    }
+
+    /**
+     * @param $x
+     * @param $y
      */
     protected function find_area($x, $y)
     {
 
-        if ($this->array_map[$x][$y + 1] == 1 && $this->is_perimeter($x, $y + 1)) {
-            $this->mark_check($x, $y + 1);
-            $this->find_area($x, $y + 1);
-        } elseif ($this->array_map[$x + 1][$y] == 1 && $this->is_perimeter($x + 1, $y)) {
-            $this->mark_check($x + 1, $y);
-            $this->find_area($x + 1, $y);
-        } elseif ($this->array_map[$x + 1][$y + 1] == 1 && $this->is_perimeter($x + 1, $y + 1)) {
-            $this->mark_check($x + 1, $y + 1);
-            $this->find_area($x + 1, $y + 1);
-        } elseif ($this->array_map[$x][$y - 1] == 1 && $this->is_perimeter($x, $y - 1)) {
-            $this->mark_check($x, $y - 1);
-            $this->find_area($x, $y - 1);
-        } elseif ($this->array_map[$x - 1][$y] == 1 && $this->is_perimeter($x - 1, $y)) {
+        if ($this->checkPoint($x - 1, $y)) {
             $this->mark_check($x - 1, $y);
             $this->find_area($x - 1, $y);
-        } elseif ($this->array_map[$x - 1][$y - 1] == 1 && $this->is_perimeter($x - 1, $y - 1)) {
+        } elseif ($this->checkPoint($x, $y - 1)) {
+            $this->mark_check($x, $y - 1);
+            $this->find_area($x, $y - 1);
+        } elseif ($this->checkPoint($x, $y + 1)) {
+            $this->mark_check($x, $y + 1);
+            $this->find_area($x, $y + 1);
+        } elseif ($this->checkPoint($x + 1, $y)) {
+            $this->mark_check($x + 1, $y);
+            $this->find_area($x + 1, $y);
+        } elseif ($this->checkPoint($x + 1, $y + 1)) {
+            $this->mark_check($x + 1, $y + 1);
+            $this->find_area($x + 1, $y + 1);
+        } elseif ($this->checkPoint($x - 1, $y - 1)) {
             $this->mark_check($x - 1, $y - 1);
             $this->find_area($x - 1, $y - 1);
         } else {
