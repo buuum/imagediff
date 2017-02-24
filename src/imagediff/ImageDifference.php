@@ -258,9 +258,6 @@ class ImageDifference
         if ($this->checkPoint($x - 1, $y)) {
             $this->mark_check($x - 1, $y);
             $this->find_area($x - 1, $y);
-        } elseif ($this->checkPoint($x, $y - 1)) {
-            $this->mark_check($x, $y - 1);
-            $this->find_area($x, $y - 1);
         } elseif ($this->checkPoint($x, $y + 1)) {
             $this->mark_check($x, $y + 1);
             $this->find_area($x, $y + 1);
@@ -270,6 +267,9 @@ class ImageDifference
         } elseif ($this->checkPoint($x + 1, $y + 1)) {
             $this->mark_check($x + 1, $y + 1);
             $this->find_area($x + 1, $y + 1);
+        } elseif ($this->checkPoint($x, $y - 1)) {
+            $this->mark_check($x, $y - 1);
+            $this->find_area($x, $y - 1);
         } elseif ($this->checkPoint($x - 1, $y - 1)) {
             $this->mark_check($x - 1, $y - 1);
             $this->find_area($x - 1, $y - 1);
