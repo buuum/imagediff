@@ -290,13 +290,17 @@ class ImageDifference
         $coords = $this->getPerimeter($x, $y);
         if (!empty($coords)) {
             $last = array_pop($coords);
-            $last = array_pop($last);
+            foreach ($last as $item) {
+                $this->mark_check($item['x'], $item['y']);
+            }
             if (!empty($coords[1])) {
                 foreach ($coords[1] as $coord) {
                     $this->mark_check($coord['x'], $coord['y']);
                 }
             }
+            $last = array_pop($last);
             $this->mark_check($last['x'], $last['y']);
+            $this->find_area($x, $y + 1);
             $this->find_area($last['x'], $last['y']);
         } else {
             $initial = $this->coordinates[$this->count][0];
