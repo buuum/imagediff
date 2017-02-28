@@ -248,31 +248,56 @@ class ImageDifference
         return isset($this->array_map[$x][$y]) && $this->array_map[$x][$y] == 1 && $this->is_perimeter($x, $y);
     }
 
+    protected function getPerimeter($x, $y)
+    {
+        $counts = [];
+        for ($i = $x - 1; $i <= $x + 1; $i++) {
+            for ($z = $y - 1; $z <= $y + 1; $z++) {
+                if (isset($this->array_map[$i][$z]) && $this->array_map[$i][$z] == 1) {
+                    $zeros = $this->countZeros($i, $z);
+                    if ($zeros > 0) {
+                        $counts[$zeros][] = [
+                            'x' => $i,
+                            'y' => $z,
+                        ];
+                    }
+                }
+            }
+        }
+        ksort($counts);
+        return $counts;
+    }
+
+    protected function countZeros($x, $y)
+    {
+        $zeros = 0;
+        for ($i = $x - 1; $i <= $x + 1; $i++) {
+            for ($z = $y - 1; $z <= $y + 1; $z++) {
+                if (!isset($this->array_map[$i][$z]) || $this->array_map[$i][$z] == 0) {
+                    $zeros++;
+                }
+            }
+        }
+        return $zeros;
+    }
+
     /**
      * @param $x
      * @param $y
      */
     protected function find_area($x, $y)
     {
-
-        if ($this->checkPoint($x - 1, $y)) {
-            $this->mark_check($x - 1, $y);
-            $this->find_area($x - 1, $y);
-        } elseif ($this->checkPoint($x, $y + 1)) {
-            $this->mark_check($x, $y + 1);
-            $this->find_area($x, $y + 1);
-        } elseif ($this->checkPoint($x + 1, $y)) {
-            $this->mark_check($x + 1, $y);
-            $this->find_area($x + 1, $y);
-        } elseif ($this->checkPoint($x + 1, $y + 1)) {
-            $this->mark_check($x + 1, $y + 1);
-            $this->find_area($x + 1, $y + 1);
-        } elseif ($this->checkPoint($x, $y - 1)) {
-            $this->mark_check($x, $y - 1);
-            $this->find_area($x, $y - 1);
-        } elseif ($this->checkPoint($x - 1, $y - 1)) {
-            $this->mark_check($x - 1, $y - 1);
-            $this->find_area($x - 1, $y - 1);
+        $coords = $this->getPerimeter($x, $y);
+        if (!empty($coords)) {
+            $last = array_pop($coords);
+            $last = array_pop($last);
+            if (!empty($coords[1])) {
+                foreach ($coords[1] as $coord) {
+                    $this->mark_check($coord['x'], $coord['y']);
+                }
+            }
+            $this->mark_check($last['x'], $last['y']);
+            $this->find_area($last['x'], $last['y']);
         } else {
             $initial = $this->coordinates[$this->count][0];
 
